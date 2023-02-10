@@ -1,5 +1,4 @@
-pub static ADDON_JSON: &str = r#"
-{
+pub static ADDON_JSON: &str = r#"{
 	"title": "%NAME%",
 	"type":	"%TYPE%",
 	"tags":	[ %TAGS% ],
@@ -21,5 +20,4 @@ pub static ADDON_JSON: &str = r#"
 		"*.bat",
 		"*.txt"
 	]
-}
-"#;
+}"#;

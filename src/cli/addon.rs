@@ -1,11 +1,12 @@
 use std::{path::Path, fs::{create_dir, write}};
 use clap::Subcommand;
-use inquire::{Text, required, MultiSelect, validator::Validation, Select, list_option::ListOption};
+use inquire::{MultiSelect, validator::Validation, list_option::ListOption};
 use paris::{success, error, info};
 use regex::Regex;
 use itertools::Itertools;
 
 use crate::templates;
+use crate::library;
 
 #[derive(Subcommand)]
 pub enum Actions {
@@ -20,7 +21,6 @@ fn validate_target_directory(input: &str) -> Result<String, String> {
 	let dir: String = input.parse().unwrap();
 
 	let regex = Regex::new(r"[^\w\d_-]").unwrap();
-
 	if regex.is_match(&dir) {
 		return Err(format!("target_directory should only contain letters, numbers, dashes and underscores!"));
 	}
@@ -37,20 +37,24 @@ pub fn init(target_directory: String) {
 
 	info!("<on-cyan><black> Cancel using CTRL + C. </>");
 
-	let input_pretty_name = Text::new("Pretty name for the addon:")
-		.with_validator(required!("This field is required!"))
-		.prompt()
-		.unwrap();
+	// Check for existing addon
+	if Path::new("./addon.json").is_file() {
+		let input_existing = library::inquire::confirm_no("An addon already exists in the current directory. Would you still like to create one?");
+		if !input_existing {
+			info!("Cancelled.");
+			return;
+		}
+	}
+
+	// Input name
+	let input_pretty_name = library::inquire::required_text("Pretty name for the addon:");
 
 	// Input type
 	let input_type_options = vec!["ServerContent", "gamemode", "map", "weapon", "vehicle", "npc", "tool", "effects", "model", "entity"];
-	let input_type = Select::new("Select addon type", input_type_options)
-		.prompt()
-		.unwrap();
+	let input_type = library::inquire::selector("Select addon type", &input_type_options);
 
-	// // Input tags
+	// Input tags
 	let input_tags_options = vec!["fun", "roleplay", "scenic", "movie", "realism", "cartoon", "water", "comic", "build"];
-	// let mut input_tags_selected = vec![];
 	let input_tags = MultiSelect::new("Select 1-2 addon tags:", input_tags_options)
 		.with_validator(|list: &[ListOption<&&str>]| {
 			if list.len() < 1 || list.len() > 2 {
@@ -67,7 +71,8 @@ pub fn init(target_directory: String) {
 	// Create addon directory
 	let create_dir_res = create_dir(&target_directory);
 	if create_dir_res.is_err() {
-		error!("Failed to create addon directory: {}", create_dir_res.unwrap_err().to_string())
+		error!("Failed to create addon directory: {}", create_dir_res.unwrap_err().to_string());
+		return;
 	}
 
 	// Replace placeholders and write addon.json

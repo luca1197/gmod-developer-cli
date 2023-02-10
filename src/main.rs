@@ -8,8 +8,16 @@ mod cli {
 use cli::addon;
 use cli::entity;
 
+// library
+mod library {
+	pub mod validation;
+	pub mod inquire;
+}
+
+// templates
 mod templates {
 	pub mod addon;
+	pub mod entity;
 }
 
 #[derive(Parser)]
