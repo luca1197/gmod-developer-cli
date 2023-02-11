@@ -51,7 +51,7 @@ pub fn create(directory_name: String) {
 	let input_type = library::inquire::selector_index("Select an entity type", &input_type_options);
 
 	// Fill entity templates
-	let (mut file_cl, mut file_sv, mut file_sh) = (String::new(), String::new(), String::new());
+	let (file_cl, file_sv, file_sh);
 
 	match input_type {
 		0 => {
@@ -60,7 +60,8 @@ pub fn create(directory_name: String) {
 			let input_model = library::inquire::text_optional("Entity model path:", "models/hunter/blocks/cube025x025x025.mdl");
 
 			// Fill templates
-			file_cl = templates::entity::ENTITY_BASIC_CL.to_string();
+			file_cl = templates::entity::ENTITY_BASIC_CL
+				.to_string();
 
 			file_sv = templates::entity::ENTITY_BASIC_SV
 				.replace("%MODEL%", &input_model)
@@ -80,7 +81,8 @@ pub fn create(directory_name: String) {
 			let input_model = library::inquire::text_optional("Entity model path:", "models/gman.mdl");
 
 			// Fill templates
-			file_cl = templates::entity::ENTITY_NPC_CL.to_string();
+			file_cl = templates::entity::ENTITY_NPC_CL
+				.to_string();
 
 			file_sv = templates::entity::ENTITY_NPC_SV
 				.replace("%MODEL%", &input_model)
