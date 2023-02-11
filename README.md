@@ -9,7 +9,7 @@ A CLI tool which assists you in creating Garry's Mod content.
 Download the latest release and move it into a directory which is inside your systems `PATH`.
 
 ### Detailed instructions
-1. Download latest release
+1. Download the [latest release](https://github.com/luca1197/gmod-developer-cli/releases/latest).
 2. Create a directory in an appropriate place, e.g. `\Users\<username>\.path`.
 3. Move the downloaded `gcli.exe` into the new directory.
 4. Add the new directory to your `PATH`. For Windows:
