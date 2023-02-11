@@ -1,8 +1,7 @@
-use std::{path::Path, fs::{create_dir, write}};
+use std::{path::Path, fs::{write, create_dir_all}};
 use clap::Subcommand;
 use inquire::{MultiSelect, validator::Validation, list_option::ListOption};
 use paris::{success, error, info};
-use regex::Regex;
 use itertools::Itertools;
 
 use crate::templates;
@@ -17,37 +16,33 @@ pub enum Actions {
 }
 
 fn validate_target_directory(input: &str) -> Result<String, String> {
-
-	let dir: String = input.parse().unwrap();
-
-	let regex = Regex::new(r"[^\w\d_-]").unwrap();
-	if regex.is_match(&dir) {
-		return Err(format!("target_directory should only contain letters, numbers, dashes and underscores!"));
-	}
-
-	if Path::new(format!("./{dir}").as_str()).exists() {
-		return Err(format!("Directory with specified target_directory already exists!"))
-	}
-
-	return Ok(dir);
-
+	return library::validation::validate_input_dirname(".", input, false);
 }
 
 pub fn init(target_directory: String) {
 
 	info!("<on-cyan><black> Cancel using CTRL + C. </>");
 
-	// Check for existing addon
+	// Check for existing addon with name
+	if Path::new(&format!("./{}", &target_directory)).is_dir() {
+		let input_override = library::inquire::confirm_no("A directory with this name already exists in the current directory! Should potentially existing files be overwritten?");
+		if !input_override {
+			info!("<on-red> Cancelled. </>");
+			return;
+		}
+	}
+
+	// Check for existing addon in current directory
 	if Path::new("./addon.json").is_file() {
-		let input_existing = library::inquire::confirm_no("An addon already exists in the current directory. Would you still like to create one?");
+		let input_existing = library::inquire::confirm_no("The current directory seems to be an addon already. Would you still like to create one?");
 		if !input_existing {
-			info!("Cancelled.");
+			info!("<on-red> Cancelled. </>");
 			return;
 		}
 	}
 
 	// Input name
-	let input_pretty_name = library::inquire::required_text("Pretty name for the addon:");
+	let input_pretty_name = library::inquire::text_required("Pretty name for the addon:");
 
 	// Input type
 	let input_type_options = vec!["ServerContent", "gamemode", "map", "weapon", "vehicle", "npc", "tool", "effects", "model", "entity"];
@@ -69,7 +64,7 @@ pub fn init(target_directory: String) {
 		.unwrap();
 
 	// Create addon directory
-	let create_dir_res = create_dir(&target_directory);
+	let create_dir_res = create_dir_all(&target_directory);
 	if create_dir_res.is_err() {
 		error!("Failed to create addon directory: {}", create_dir_res.unwrap_err().to_string());
 		return;

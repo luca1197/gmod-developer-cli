@@ -1,10 +1,25 @@
 use inquire::{Text, required, Select, Confirm};
 
-pub fn required_text(prompt: &str) -> String {
-	return Text::new(prompt)
+pub fn text_required(prompt: &str) -> String {
+
+	let res_string = Text::new(prompt)
 		.with_validator(required!("This field is required!"))
 		.prompt()
 		.unwrap();
+
+	return res_string;
+
+}
+
+pub fn text_optional(prompt: &str, default: &str) -> String {
+
+	let res_string = Text::new(prompt)
+		.with_default(default)
+		.prompt()
+		.unwrap();
+
+	return res_string;
+
 }
 
 pub fn selector(prompt: &str, options: &Vec<&str>) -> String {

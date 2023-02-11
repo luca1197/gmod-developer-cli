@@ -62,8 +62,8 @@ fn main() {
 			match action {
 				
 				// entity create <name>
-				entity::Actions::Create { name } => {
-					entity::create(name);
+				entity::Actions::Create { directory_name } => {
+					entity::create(directory_name);
 				}
 
 			}
