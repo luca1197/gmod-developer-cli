@@ -20,7 +20,7 @@ Download the latest release and move it into a directory which is inside your sy
    5. Click "New".
    6. Enter the path to the created directory, e.g. `C:\Users\<username>\.path`.
    7. Press "OK" in all opened windows.
-5. You can now use `gcli` in new terminal session.
+5. You can now use `gcli` in new terminal sessions.
 
 ## Commands
 
