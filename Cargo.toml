@@ -1,5 +1,5 @@
 [package]
-name = "gmod-developer-cli"
+name = "gcli"
 version = "0.1.0"
 edition = "2021"
 
