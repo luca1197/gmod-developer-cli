@@ -6,10 +6,6 @@ pub static ENTITY_BASIC_CL: &str = r#"include("shared.lua")
 function ENT:Initialize()
 
 end
-
-function ENT:Draw()
-
-end
 "#;
 
 pub static ENTITY_BASIC_SV: &str = r#"AddCSLuaFile("cl_init.lua")
@@ -40,10 +36,6 @@ ENT.Spawnable = %SPAWNABLE%
 pub static ENTITY_NPC_CL: &str = r#"include("shared.lua")
 
 function ENT:Initialize()
-
-end
-
-function ENT:Draw()
 
 end
 "#;
