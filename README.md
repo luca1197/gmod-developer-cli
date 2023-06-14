@@ -2,7 +2,7 @@
 
 A CLI tool which assists you in creating Garry's Mod content.
 
-⚠️ **This tool is in a very early barebone stage. Also, this is my first time actually using Rust, I (mostly) don't have a clue what I'm doing.** This project is primarily for me to get familiar with Rust, but perhaps someone else will find it useful. I created this tool because I was frustrated with constantly having to copy and paste files, then strip most of the content out of them just to create e.g. an entity.
+> **Warning** – **This tool is in a very early barebone stage and does not offer many features. Also, this is my first time actually using Rust, I (mostly) don't have a clue what I'm doing.** This project is primarily for me to get familiar with Rust, but perhaps someone else will find it useful. I created this tool because I was frustrated with constantly having to copy and paste files, then strip most of the content out of them just to create e.g. an entity.
 
 ## Installation
 
