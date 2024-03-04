@@ -9,5 +9,5 @@ edition = "2021"
 clap = { version = "4.5.1", features = ["derive"] }
 paris = { version = "1.5", features = ["timestamps", "macros", "no_logger"] }
 regex = "1"
-inquire = "0.6"
+inquire = "0.7"
 itertools = "0.12"
