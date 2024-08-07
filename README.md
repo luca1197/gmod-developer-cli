@@ -8,17 +8,17 @@ A CLI tool which assists you in creating Garry's Mod content.
 
 Download the latest release and move it into a directory which is inside your systems `PATH`.
 
-### Detailed instructions
-1. Download the [latest release](https://github.com/luca1197/gmod-developer-cli/releases/latest).
-2. Create a directory in an appropriate place, e.g. `\Users\<username>\.path`.
+### Detailed instructions (Windows)
+1. Download the [latest release](https://github.com/luca1197/gmod-developer-cli/releases/latest) and unzip it.
+2. Create a directory in an appropriate place, e.g. `\Users\<YOUR-USERNAME>\.path`.
 3. Move the downloaded `gcli.exe` into the new directory.
-4. Add the new directory to your `PATH`. For Windows:
+4. Add the new directory to your `PATH`:
    1. In Windows search, type `env`.
    2. Select "Edit environment variables".
    3. Click "Environment variables" in the bottom right.
-   4. Select `PATH` / `Path` → "Edit".
+   4. In the upper list, select the variable named `PATH` / `Path`, then click "Edit".
    5. Click "New".
-   6. Enter the path to the created directory, e.g. `C:\Users\<username>\.path`.
+   6. Enter the path to the created directory, e.g. `C:\Users\<YOUR-USERNAME>\.path`.
    7. Press "OK" in all opened windows.
 5. You can now use `gcli` in new terminal sessions.
 
@@ -40,7 +40,7 @@ This is very useful when using content from many different sources, since this w
 
 Currently, this command only supports materials and models (no sounds). The command will parse materials and models to look for referenced materials and textures. [Patch materials](https://developer.valvesoftware.com/wiki/Patch) are supported.
 
-This command will look at the game files to check if any content missing in the provided source directories is already part of the game. This will use the game's `gameinfo.txt`, so make sure that you did not mount any content in there since the command will assume that it is part of the game, thus not including in the output!
+This command will look at the game files to check if any content missing in the provided source directories is already part of the game. This will use the game's `gameinfo.txt`, so make sure that you did not mount any additional custom content in there since the command will assume that it is part of the game, thus not including in the output!
 
 **Options:**
 * `-s <source_path>` - Path to a directory which contains content the map potentially uses. This option can be used multiple times.
