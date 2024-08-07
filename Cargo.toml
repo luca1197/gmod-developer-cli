@@ -11,3 +11,11 @@ paris = { version = "1.5", features = ["timestamps", "macros", "no_logger"] }
 regex = "1"
 inquire = "0.7"
 itertools = "0.13"
+walkdir = "2"
+plumber_core = { git = "https://github.com/luca1197/fork-plumber_core" }
+steamlocate = "1"
+simple-error = "0.3"
+
+[patch.crates-io]
+serde = { git = "https://github.com/lasa01/serde", branch = "case-insensitive-attr" }
+serde_derive = { git = "https://github.com/lasa01/serde", branch = "case-insensitive-attr" }

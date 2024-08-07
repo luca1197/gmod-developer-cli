@@ -4,9 +4,11 @@ use clap::{Parser, Subcommand};
 mod cli {
 	pub mod addon;
 	pub mod entity;
+	pub mod vmf;
 }
 use cli::addon;
 use cli::entity;
+use cli::vmf;
 
 // library
 mod library {
@@ -36,6 +38,10 @@ enum Commands {
 	Entity {
 		#[command(subcommand)]
 		action: entity::Actions,
+	},
+	VMF {
+		#[command(subcommand)]
+		action: vmf::Actions,
 	}
 }
 
@@ -64,6 +70,18 @@ fn main() {
 				// entity create <name>
 				entity::Actions::Create { directory_name } => {
 					entity::create(directory_name);
+				}
+
+			}
+		}
+
+		// vmf <action>
+		Commands::VMF { action } => {
+			match action {
+
+				// vmf collect-content <vmf-path>
+				vmf::Actions::CollectContent { vmf_path, source_path, output_path } => {
+					vmf::content_collector::collect_content(&vmf_path, source_path, &output_path);
 				}
 
 			}
