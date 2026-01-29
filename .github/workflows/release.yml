@@ -1,4 +1,4 @@
-name: Build and release
+name: Release
 
 on:
   push:
@@ -8,74 +8,158 @@ on:
 permissions:
   contents: write
 
-jobs:
-  build-and-release:
-    name: Build and release
-    runs-on: ${{ matrix.os }}
+env:
+  BINARY_NAME: gcli
 
+jobs:
+  # Build all platform binaries in parallel
+  build:
+    name: Build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - build: linux
+          - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
-            target: x86_64-unknown-linux-musl
+            archive: tar.gz
 
-          - build: windows
+          - target: x86_64-pc-windows-msvc
             os: windows-latest
-            target: x86_64-pc-windows-msvc
+            archive: zip
 
-          - build: macos
+          - target: x86_64-apple-darwin
             os: macos-latest
-            target: x86_64-apple-darwin
+            archive: tar.gz
+
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            archive: tar.gz
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-      - name: Get the release version from the tag
-        shell: bash
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
-      - name: Install Rust
+      - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
 
-      - name: Install musl-tools
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: release-${{ matrix.target }}
+
+      - name: Install musl-tools (Linux)
         if: matrix.target == 'x86_64-unknown-linux-musl'
         run: |
           sudo apt-get update
           sudo apt-get install -y musl-tools
           sudo ln -s /bin/g++ /bin/musl-g++
 
-      - name: Build
-        run: |
-          cargo build --verbose --release --target ${{ matrix.target }}
+      - name: Build release binary
+        run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Build archive
+      - name: Get version from tag
+        id: version
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Package binary (Unix)
+        if: matrix.os != 'windows-latest'
         shell: bash
         run: |
-          binary_name="gcli"
+          DIRNAME="${{ env.BINARY_NAME }}-${{ steps.version.outputs.VERSION }}-${{ matrix.target }}"
+          mkdir -p "$DIRNAME"
+          cp "target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}" "$DIRNAME/"
+          cp README.md "$DIRNAME/" 2>/dev/null || true
+          cp LICENSE* "$DIRNAME/" 2>/dev/null || true
+          tar -czf "$DIRNAME.tar.gz" "$DIRNAME"
+          echo "ASSET=$DIRNAME.tar.gz" >> $GITHUB_ENV
 
-          dirname="$binary_name-${{ env.VERSION }}-${{ matrix.target }}"
-          mkdir "$dirname"
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            mv "target/${{ matrix.target }}/release/$binary_name.exe" "$dirname"
-          else
-            mv "target/${{ matrix.target }}/release/$binary_name" "$dirname"
-          fi
+      - name: Package binary (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          DIRNAME="${{ env.BINARY_NAME }}-${{ steps.version.outputs.VERSION }}-${{ matrix.target }}"
+          mkdir -p "$DIRNAME"
+          cp "target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}.exe" "$DIRNAME/"
+          cp README.md "$DIRNAME/" 2>/dev/null || true
+          cp LICENSE* "$DIRNAME/" 2>/dev/null || true
+          7z a "$DIRNAME.zip" "$DIRNAME"
+          echo "ASSET=$DIRNAME.zip" >> $GITHUB_ENV
 
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            7z a "$dirname.zip" "$dirname"
-            echo "ASSET=$dirname.zip" >> $GITHUB_ENV
-          else
-            tar -czf "$dirname.tar.gz" "$dirname"
-            echo "ASSET=$dirname.tar.gz" >> $GITHUB_ENV
-          fi
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.BINARY_NAME }}-${{ matrix.target }}
+          path: ${{ env.ASSET }}
+          if-no-files-found: error
 
-      - name: Release
+  # Create release with changelog and upload all artifacts
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Get previous tag
+        id: prev_tag
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          echo "PREV_TAG=$PREV_TAG" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          {
+            echo "CHANGELOG<<EOF"
+            echo "## What's Changed"
+            echo ""
+            
+            if [ -n "${{ steps.prev_tag.outputs.PREV_TAG }}" ]; then
+              git log ${{ steps.prev_tag.outputs.PREV_TAG }}..HEAD --pretty=format:"- %s (%h)" --no-merges
+            else
+              git log --pretty=format:"- %s (%h)" --no-merges | head -50
+            fi
+            
+            echo ""
+            echo ""
+            
+            if [ -n "${{ steps.prev_tag.outputs.PREV_TAG }}" ]; then
+              echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.prev_tag.outputs.PREV_TAG }}...${{ steps.version.outputs.VERSION }}"
+            fi
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Collect release assets
+        run: |
+          mkdir -p release-assets
+          find artifacts -type f \( -name "*.tar.gz" -o -name "*.zip" \) -exec mv {} release-assets/ \;
+          ls -la release-assets/
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            ${{ env.ASSET }}
+          name: v${{ steps.version.outputs.VERSION }}
+          body: ${{ steps.changelog.outputs.CHANGELOG }}
+          draft: false
+          prerelease: false
+          files: release-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
