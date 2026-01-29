@@ -65,8 +65,8 @@ pub fn init(target_directory: String) {
 
 	// Create addon directory
 	let create_dir_res = create_dir_all(&target_directory);
-	if create_dir_res.is_err() {
-		error!("Failed to create addon directory: {}", create_dir_res.unwrap_err().to_string());
+	if let Err(e) = create_dir_res {
+		error!("Failed to create addon directory: {}", e);
 		return;
 	}
 
@@ -77,8 +77,8 @@ pub fn init(target_directory: String) {
 		.replace("%TAGS%", &input_tags.iter().map(|s| format!("\"{}\"", s)).join(", "));
 
 	let create_json_res = write(format!("./{target_directory}/addon.json"), addon_json_content);
-	if create_json_res.is_err() {
-		error!("Failed to create addon.json: {}", create_json_res.unwrap_err().to_string());
+	if let Err(e) = create_json_res {
+		error!("Failed to create addon.json: {}", e);
 		return;
 	}
 
