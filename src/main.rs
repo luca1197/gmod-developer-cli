@@ -84,6 +84,10 @@ fn main() {
 					vmf::content_collector::collect_content(&vmf_path, source_path, &output_path);
 				}
 
+				vmf::Actions::Stats { vmf_path } => {
+					vmf::stats::output_vmf_stats(&vmf_path);
+				}
+
 			}
 		}
 
