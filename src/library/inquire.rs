@@ -32,7 +32,7 @@ pub fn selector(prompt: &str, options: &Vec<&str>) -> String {
 
 }
 
-pub fn selector_index<'a>(prompt: &str, options: &Vec<&str>) -> usize {
+pub fn selector_index(prompt: &str, options: &Vec<&str>) -> usize {
 
 	let res_string = Select::new(prompt, options.to_vec())
 		.prompt()

@@ -428,7 +428,7 @@ pub fn copy_files_to_output(
 	output_path: &Path,
 	additional_extensions: Option<&[&str]>,
 ) {
-	for (_, source_file) in source_files {
+	for source_file in source_files.values() {
 		let output_file_path = output_path.join(&source_file.local_path);
 		let Some(output_dir) = output_file_path.parent() else {
 			warn!("Failed to get parent directory of \"{}\"", output_file_path.display());
@@ -458,12 +458,17 @@ pub fn copy_files_to_output(
 	}
 }
 
+/// A tuple of found content files and missing content files with usage context.
+/// - First element: File path -> Found content files in source directories
+/// - Second element: Missing file path -> Descriptions of where they're referenced
+type ContentSummary<'a> = (&'a HashMap<String, SourceContentFile>, &'a HashMap<String, String>);
+
 /// Prints a content summary to the console
 pub fn print_content_summary(
 	source_files_count: usize,
-	materials: (&HashMap<String, SourceContentFile>, &HashMap<String, String>),
-	models: Option<(&HashMap<String, SourceContentFile>, &HashMap<String, String>)>,
-	textures: (&HashMap<String, SourceContentFile>, &HashMap<String, String>),
+	materials: ContentSummary,
+	models: Option<ContentSummary>,
+	textures: ContentSummary,
 ) {
 	info!("<magenta>CONTENT SUMMARY:</>");
 	info!("\t<magenta>↳</> Source files: Total <cyan>{}</>", source_files_count);

@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs, path::PathBuf};
+use std::{collections::HashMap, fs, path::Path};
 use paris::{error, info, success, warn};
 use plumber_core::uncased::UncasedStr;
 use crate::library::content::{
@@ -10,7 +10,7 @@ use crate::library::content::{
 };
 
 /// Collects all content (materials, textures, models) used by a VMF map file
-pub fn collect_content(vmf: &PathBuf, source_path_strings: Vec<String>, output_path: &PathBuf) {
+pub fn collect_content(vmf: &Path, source_path_strings: Vec<String>, output_path: &Path) {
 	// Validate source paths
 	let source_paths = collect_source_paths(source_path_strings);
 	if source_paths.is_empty() {
@@ -141,7 +141,7 @@ pub fn collect_content(vmf: &PathBuf, source_path_strings: Vec<String>, output_p
 
 	// Collect materials used by models
 	info!("Collecting materials used by <cyan>{}</> collected models...", used_models.len());
-	for (_, content_file) in &used_models {
+	for content_file in used_models.values() {
 		let (model_used, model_missing) = collect_model_materials(&content_file.full_path, &source_files, &game_fs_open);
 		used_materials.extend(model_used);
 		missing_materials.extend(model_missing);
@@ -166,7 +166,7 @@ pub fn collect_content(vmf: &PathBuf, source_path_strings: Vec<String>, output_p
 	// Collect textures used by used_materials materials
 	info!("Collecting textures used by <cyan>{}</> materials...", used_materials.len());
 	let mut material_data = SourceMaterialData::new();
-	for (_, source_file) in &used_materials {
+	for source_file in used_materials.values() {
 		match read_material_data(&source_file.full_path, &source_files, &game_fs_open) {
 			Ok(data) => material_data.extend(data),
 			Err(err) => warn!("Failed to read material data of \"{}\": {}", source_file.full_path, err),

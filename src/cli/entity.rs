@@ -104,8 +104,8 @@ pub fn create(directory_name: String) {
 
 	// Create entity directory
 	let create_dir_res = create_dir_all(format!("./lua/entities/{}", &directory_name));
-	if create_dir_res.is_err() {
-		error!("Failed to create entity directory: {}", create_dir_res.unwrap_err().to_string());
+	if let Err(e) = create_dir_res {
+		error!("Failed to create entity directory: {}", e);
 		return;
 	}
 
@@ -116,18 +116,18 @@ pub fn create(directory_name: String) {
 		write(format!("./lua/entities/{}/shared.lua", &directory_name), &file_sh),
 	);
 
-	if create_cl_res.is_err() {
-		error!("Failed to create cl_init.lua: {}", create_cl_res.unwrap_err().to_string());
+	if let Err(e) = create_cl_res {
+		error!("Failed to create cl_init.lua: {}", e);
 		return;
 	}
 
-	if create_sv_res.is_err() {
-		error!("Failed to create init.lua: {}", create_sv_res.unwrap_err().to_string());
+	if let Err(e) = create_sv_res {
+		error!("Failed to create init.lua: {}", e);
 		return;
 	}
 
-	if create_sh_res.is_err() {
-		error!("Failed to create shared.lua: {}", create_sh_res.unwrap_err().to_string());
+	if let Err(e) = create_sh_res {
+		error!("Failed to create shared.lua: {}", e);
 		return;
 	}
 
