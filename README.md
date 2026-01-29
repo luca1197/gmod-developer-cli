@@ -5,6 +5,9 @@ A CLI tool which assists you in creating Garry's Mod content.
 > [!NOTE]
 > Only confirmed to fully work on Windows as of now. Builds for Linux and macOS are available though.
 
+## Project status
+The tool is pretty much stable. It has been used in production for a while now without issues. The `vmf collect-content` command has been used successfully for several releases of a large-scale map without any manual intervention required. I am adding new features as I need them.
+
 ## Installation
 
 Download the latest release and move it into a directory which is inside your systems `PATH`.
