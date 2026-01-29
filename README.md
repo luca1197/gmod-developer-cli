@@ -2,7 +2,8 @@
 
 A CLI tool which assists you in creating Garry's Mod content.
 
-*Warning - Some commands of this tool are a "work in progress" and may not function fully as expected yet.*
+> [!NOTE]
+> Only confirmed to fully work on Windows as of now. Builds for Linux and macOS are available though.
 
 ## Installation
 
@@ -46,9 +47,21 @@ This command will look at the game files to check if any content missing in the 
 * `-s <source_path>` - Path to a directory which contains content the map potentially uses. This option can be used multiple times.
 * `-o <output_path>` - Path to a directory where all of the content the map uses will be copied to.
 
-Keep in mind that it is not rare to encounter many models that are missing materials. For example this may be caused by skin slots that have no material present, which is the fault of the model creator. If you encounter such warnings, just load the map in-game and check if anything is missing manually. In addition to that, some models do not have a physics model (`.phy`) which will cause warnings that you should fix or ignore on case-by-case basis (again, just test it in-game).
+Keep in mind that it is not rare to encounter many models that are missing materials. For example this may be caused by skin slots that have no material present, which is the fault of the model creator. If you encounter such warnings, just load the map in-game and manually check if anything is missing. In addition to that, some models do not have a physics model (`.phy`) which will cause warnings that you should fix or ignore on case-by-case basis (again, just test it in-game).
 
 For model files, this command currently only copies the `.dx90.vtx`, `.mdl`, `.phy` and `.vvd` files since those are the only required files for a modern GMod install which reduces the final content file size.
+
+### `model`
+#### `gcli model collect-content <model_path>`
+Collects materials and textures used by the specified model and copies them to the specified output directory.
+
+This command is similar to the `vmf collect-content` command, but it's focused on a single model file. It uses the same internal logic, so please see the documentation of that command for more details.
+
+**Options:**
+* `-s <source_path>` - Path to a directory which contains content the model potentially uses. This option can be used multiple times.
+* `-o <output_path>` - Path to a directory where all of the content the model uses will be copied to.
+
+Keep in mind that is is not rare to encounter models that are missing materials. For example this may be caused by skin slots that have no material present, which is the fault of the model creator. If you encounter such warnings, just load the model in-game and manually check if anything is missing.
 
 ## Building
 
@@ -57,4 +70,4 @@ Requires "C++ MFC for latest v143 build Tools (x86 & x64)", which can be install
 (TODO: Add more instructions)
 
 ## ❤️ Credits
-- [lasa01/plumber_core](https://github.com/lasa01/plumber_core) (Forked to [luca1197/fork-plumber_core](https://github.com/luca1197/fork-plumber_core)) - Without this library the `vmf collect-content` command would be impossible due to how much work it would be to implement all of the parsing functionality this library offers. A real gem.
+- [lasa01/plumber_core](https://github.com/lasa01/plumber_core) (Forked to [luca1197/fork-plumber_core](https://github.com/luca1197/fork-plumber_core)) - Without this library the content collection commands would be impossible due to how much work it would be to implement all of the parsing functionality this library offers. A real gem.

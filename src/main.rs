@@ -4,14 +4,17 @@ use clap::{Parser, Subcommand};
 mod cli {
 	pub mod addon;
 	pub mod entity;
+	pub mod model;
 	pub mod vmf;
 }
 use cli::addon;
 use cli::entity;
 use cli::vmf;
+use cli::model;
 
 // library
 mod library {
+	pub mod content;
 	pub mod validation;
 	pub mod inquire;
 }
@@ -42,7 +45,11 @@ enum Commands {
 	VMF {
 		#[command(subcommand)]
 		action: vmf::Actions,
-	}
+	},
+	Model {
+		#[command(subcommand)]
+		action: model::Actions,
+	},
 }
 
 fn main() {
@@ -82,6 +89,18 @@ fn main() {
 				// vmf collect-content <vmf-path>
 				vmf::Actions::CollectContent { vmf_path, source_path, output_path } => {
 					vmf::content_collector::collect_content(&vmf_path, source_path, &output_path);
+				}
+
+			}
+		}
+
+		// model <action>
+		Commands::Model { action } => {
+			match action {
+
+				// model collect-content <model-path>
+				model::Actions::CollectContent { model_path, source_path, output_path } => {
+					model::content_collector::collect_content(&model_path, source_path, &output_path);
 				}
 
 			}
