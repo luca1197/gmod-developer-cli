@@ -52,7 +52,7 @@ pub fn init(target_directory: String) {
 	let input_tags_options = vec!["fun", "roleplay", "scenic", "movie", "realism", "cartoon", "water", "comic", "build"];
 	let input_tags = MultiSelect::new("Select 1-2 addon tags:", input_tags_options)
 		.with_validator(|list: &[ListOption<&&str>]| {
-			if list.len() < 1 || list.len() > 2 {
+			if list.is_empty() || list.len() > 2 {
 				return Ok(Validation::Invalid(
 					format!("{} tags selected, but 1-2 are required.", list.len()).into()
 				))

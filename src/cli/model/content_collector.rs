@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{Path};
 use paris::{error, info, success, warn};
 use crate::library::content::{
 	SourceMaterialData,
@@ -9,7 +9,7 @@ use crate::library::content::{
 };
 
 /// Collects all content (materials, textures) used by a model file
-pub fn collect_content(model: &PathBuf, source_path_strings: Vec<String>, output_path: &PathBuf) {
+pub fn collect_content(model: &Path, source_path_strings: Vec<String>, output_path: &Path) {
 	// Validate source paths
 	let source_paths = collect_source_paths(source_path_strings);
 	if source_paths.is_empty() {
@@ -77,7 +77,7 @@ pub fn collect_content(model: &PathBuf, source_path_strings: Vec<String>, output
 	// Collect textures used by used_materials materials
 	info!("Collecting textures used by <cyan>{}</> materials...", used_materials.len());
 	let mut material_data = SourceMaterialData::new();
-	for (_, source_file) in &used_materials {
+	for source_file in used_materials.values() {
 		match read_material_data(&source_file.full_path, &source_files, &game_fs_open) {
 			Ok(data) => material_data.extend(data),
 			Err(err) => warn!("Failed to read material data of \"{}\": {}", source_file.full_path, err),
