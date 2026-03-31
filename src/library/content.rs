@@ -47,27 +47,69 @@ impl SourceMaterialData {
 }
 
 // VMT parameters that contain texture paths
-pub const VMT_TEXTURE_PARAMETERS: [&str; 20] = [
+pub const VMT_TEXTURE_PARAMETERS: [&str; 46] = [
+	// Base textures
 	"$basetexture",
 	"$basetexture2",
 	"$detail",
 	"$detail1",
 	"$detail2",
+	"$texture2",
+	"$decaltexture",
+	// Bump / normal maps
 	"$bumpmap",
 	"$bumpmap2",
 	"$bumpmask",
+	"$normalmap",
+	"$dudvmap",
+	// Lighting
+	"$lightmap",
+	"$lightwarptexture",
+	// Self-illumination
 	"$selfillummask",
 	"$selfillumtexture",
 	"$ambientoccltexture",
-	"$lightmap",
+	// Phong
 	"$phongexponenttexture",
 	"$phongwarptexture",
+	// Environment map
 	"$envmap",
 	"$envmapmask",
+	// Blend / modulate
 	"$tintmasktexture",
 	"$blendmodulatetexture",
-	"$normalmap",
-	"$lightwarptexture",
+	// Wrinkle maps (VertexLitGeneric)
+	"$compress",
+	"$stretch",
+	// Parallax / displacement
+	"$parallaxmap",
+	"$displacementmap",
+	// Water
+	"$flowmap",
+	"$refracttexture",
+	"$flow_noise_texture",
+	// Masks (CSGO specific)
+	"$masks1",
+	"$masks2",
+	"$maskstexture",
+	// Fresnel
+	"$fresnelrangestexture",
+	// Refraction
+	"$refracttinttexture",
+	// Emissive blend (VertexLitGeneric)
+	"$emissiveblendtexture",
+	"$emissiveblendbasetexture",
+	"$emissiveblendflowtexture",
+	// Flesh effect (VertexLitGeneric)
+	"$fleshinteriortexture",
+	"$fleshnormaltexture",
+	"$fleshbordertexture1d",
+	"$fleshsubsurfacetexture",
+	"$fleshinteriornoisetexture",
+	"$fleshcubetexture",
+	// Eye
+	"$iris",
+	"$corneatexture",
 ];
 
 // $envmap default value that should be skipped (engine-generated cubemap)
